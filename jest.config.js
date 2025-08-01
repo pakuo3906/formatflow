@@ -14,6 +14,7 @@ const customJestConfig = {
     '^@/(.*)$': '<rootDir>/src/$1',
     '^react-markdown$': '<rootDir>/src/components/__mocks__/react-markdown.tsx',
     '^remark-gfm$': '<rootDir>/src/components/__mocks__/remark-gfm.js',
+    '^pdfjs-dist$': '<rootDir>/src/components/__mocks__/pdfjs-dist.js',
   },
   transformIgnorePatterns: [
     'node_modules/(?!(react-markdown|remark-gfm|unified|micromark|decode-named-character-reference|character-entities|property-information|hast-util-whitespace|space-separated-tokens|comma-separated-tokens|pretty-bytes)/)',

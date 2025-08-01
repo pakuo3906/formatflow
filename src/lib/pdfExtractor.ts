@@ -1,13 +1,24 @@
-import * as pdfjs from 'pdfjs-dist'
-
 // Configure PDF.js worker (only in browser environment)
-if (typeof window !== 'undefined' && pdfjs.GlobalWorkerOptions) {
-  pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`
+let pdfjs: any = null
+
+const initializePdfjs = async () => {
+  if (typeof window === 'undefined') {
+    throw new Error('PDF.js can only be used in browser environment')
+  }
+  
+  if (!pdfjs) {
+    pdfjs = await import('pdfjs-dist')
+    if (pdfjs.GlobalWorkerOptions) {
+      pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`
+    }
+  }
+  return pdfjs
 }
 
 export async function extractTextFromPDF(buffer: ArrayBuffer): Promise<string> {
   try {
-    const pdf = await pdfjs.getDocument({ data: buffer }).promise
+    const pdfjsLib = await initializePdfjs()
+    const pdf = await pdfjsLib.getDocument({ data: buffer }).promise
     const textPages: string[] = []
     
     for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {

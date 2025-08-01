@@ -8,9 +8,8 @@ const initializePdfjs = async () => {
   
   if (!pdfjs) {
     pdfjs = await import('pdfjs-dist')
-    if (pdfjs.GlobalWorkerOptions) {
-      pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`
-    }
+    // Disable worker for development - use main thread instead
+    pdfjs.GlobalWorkerOptions.workerSrc = false
   }
   return pdfjs
 }

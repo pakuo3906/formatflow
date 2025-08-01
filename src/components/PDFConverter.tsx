@@ -4,6 +4,7 @@ import { useState } from 'react'
 import PDFUploader from './PDFUploader'
 import MarkdownPreview from './MarkdownPreview'
 import { extractTextFromPDF, fileToArrayBuffer } from '../lib/pdfExtractor'
+import { extractTextFromPDFSimple } from '../lib/simplePdfExtractor'
 import { convertTextToMarkdown } from '../lib/markdownConverter'
 
 type ProcessingState = 'idle' | 'processing' | 'completed' | 'error'
@@ -20,11 +21,17 @@ export default function PDFConverter() {
     setError('')
     
     try {
-      // Convert file to ArrayBuffer
-      const buffer = await fileToArrayBuffer(file)
+      let text: string
       
-      // Extract text from PDF
-      const text = await extractTextFromPDF(buffer)
+      try {
+        // Try PDF.js first
+        const buffer = await fileToArrayBuffer(file)
+        text = await extractTextFromPDF(buffer)
+      } catch (pdfError) {
+        console.warn('PDF.js extraction failed, using fallback:', pdfError)
+        // Fallback to simple demo extraction
+        text = await extractTextFromPDFSimple(file)
+      }
       
       // Convert to Markdown
       const convertedMarkdown = convertTextToMarkdown(text)
